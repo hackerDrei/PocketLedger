@@ -1,0 +1,13 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Pocket Ledger",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Pocket Ledger",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "description": "Basic Accounting Companion",
+  "id": "pocketledger"
+}
