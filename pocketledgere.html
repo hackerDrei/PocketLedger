@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pocket Ledger</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#10b981', 600: '#059669' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12 font-sans antialiased select-none">
+
+  <!-- Top Mobile Header -->
+  <header class="p-4 bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 sticky top-0 z-20 shadow-lg">
+    <div class="max-w-md mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-2xl">📖</span>
+        <div>
+          <h1 class="text-base font-bold text-emerald-400 tracking-wide leading-none">Pocket Ledger</h1>
+          <p class="text-[10px] text-slate-400">Basic Accounting Companion</p>
+        </div>
+      </div>
+      <button onclick="toggleModal('jargonModal')" class="text-xs bg-slate-700/60 hover:bg-slate-700 border border-slate-600/50 text-slate-200 px-3 py-1.5 rounded-full transition-all flex items-center gap-1 active:scale-95">
+        ❓ Jargon Buster
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto p-4 space-y-5">
+
+    <!-- ⚖️ Auto Accounting Equation Dashboard -->
+    <section class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Accounting Equation</h2>
+        <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-mono">Real-Time</span>
+      </div>
+      
+      <div class="text-center bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/60 shadow-inner">
+        <p class="text-[11px] text-slate-400 font-mono">Assets = Liabilities + Equity</p>
+        <p class="text-lg sm:text-xl font-extrabold text-emerald-400 mt-1 font-mono tracking-tight" id="eqDisplay">₱0.00 = ₱0.00 + ₱0.00</p>
+      </div>
+
+      <!-- Financial Breakdown Cards -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-[10px] text-slate-400 block font-medium">Assets</span>
+          <span class="font-bold text-emerald-400 text-xs sm:text-sm font-mono mt-0.5 block truncate" id="assetsVal">₱0.00</span>
+        </div>
+        <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-[10px] text-slate-400 block font-medium">Liabilities</span>
+          <span class="font-bold text-rose-400 text-xs sm:text-sm font-mono mt-0.5 block truncate" id="liabVal">₱0.00</span>
+        </div>
+        <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-[10px] text-slate-400 block font-medium">Equity</span>
+          <span class="font-bold text-sky-400 text-xs sm:text-sm font-mono mt-0.5 block truncate" id="equityVal">₱0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📈 Gamification Badges -->
+    <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-2.5">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xs font-bold text-slate-300">🏅 Badges & Achievement Progress</h3>
+        <span class="text-[10px] text-slate-400" id="badgeCount">0 / 3 Unlocked</span>
+      </div>
+      <div class="grid grid-cols-3 gap-2" id="badgeContainer">
+        <!-- Badges rendered via JavaScript -->
+      </div>
+    </section>
+
+    <!-- 📝 Daily Transaction Form -->
+    <section class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl space-y-3">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">
+        <span>📝</span> My Daily Transactions
+      </h2>
+
+      <form id="transForm" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-medium text-slate-400 mb-1">Description / Item</label>
+          <input type="text" id="desc" placeholder="e.g., Allowance, Food, Fare, Savings" required 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 transition-all placeholder:text-slate-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-medium text-slate-400 mb-1">Amount (₱)</label>
+            <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 transition-all font-mono placeholder:text-slate-600">
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-slate-400 mb-1">Category Type</label>
+            <select id="type" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+              <option value="allowance">Allowance / Earnings (+Asset)</option>
+              <option value="expense">Expense (-Asset)</option>
+              <option value="savings">Savings (+Asset Track)</option>
+              <option value="debt">Borrowed Money (+Liab)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 text-sm">
+          Add Entry
+        </button>
+      </form>
+    </section>
+
+    <!-- ✅ Smart Feedback Box -->
+    <div id="feedbackBox" class="hidden bg-slate-800 border-l-4 border-sky-400 p-4 rounded-xl shadow-lg space-y-1 transition-all">
+      <div class="flex items-center gap-2">
+        <span class="text-base">💡</span>
+        <span class="font-bold text-xs text-sky-400 uppercase tracking-wider">Smart Accounting Insight</span>
+      </div>
+      <p id="feedbackText" class="text-xs text-slate-300 leading-relaxed pl-6"></p>
+    </div>
+
+    <!-- 📊 Financial Chart Visualizer -->
+    <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-2">
+      <h3 class="text-xs font-bold text-slate-300">📊 Visual Financial Status</h3>
+      <div class="flex justify-center items-center py-2">
+        <canvas id="financialChart" width="280" height="130"></canvas>
+      </div>
+    </section>
+
+    <!-- Recent Logs & Action Controls -->
+    <section class="space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Recent Transactions</h2>
+        <div class="flex gap-2">
+          <button onclick="exportToCSV()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 active:scale-95">
+            📥 Export CSV
+          </button>
+          <button onclick="clearData()" class="text-[11px] bg-slate-800 hover:bg-rose-950 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg transition-all active:scale-95">
+            🗑️ Clear
+          </button>
+        </div>
+      </div>
+
+      <div id="transList" class="space-y-2">
+        <!-- Rendered log items go here -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 📖 Jargon Buster Modal -->
+  <div id="jargonModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+        <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-2">
+          <span>📖</span> Jargon Buster Dictionary
+        </h3>
+        <button onclick="toggleModal('jargonModal')" class="text-slate-400 hover:text-slate-100 text-lg font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-2.5 text-xs">
+        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+          <p class="font-bold text-emerald-400 mb-0.5">Assets</p>
+          <p class="text-slate-300 leading-snug">Lahat ng pera o ari-arian na hawak mo ngayon (e.g., Allowance, Cash, Savings).</p>
+        </div>
+        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+          <p class="font-bold text-rose-400 mb-0.5">Liabilities</p>
+          <p class="text-slate-300 leading-snug">Mga utang o obligasyon na kailangan mong bayaran sa ibang tao.</p>
+        </div>
+        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+          <p class="font-bold text-sky-400 mb-0.5">Equity (Net Worth)</p>
+          <p class="text-slate-300 leading-snug">Ang kung anong tunay na SA'YO matapos ibawas ang utang. Formula: <span class="font-mono text-emerald-400">Assets - Liabilities</span>.</p>
+        </div>
+        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+          <p class="font-bold text-amber-400 mb-0.5">Expense</p>
+          <p class="text-slate-300 leading-snug">Mga ginastos na pera na nagpapababa sa iyong Equity (e.g., Pagkain, Pamasahe).</p>
+        </div>
+      </div>
+
+      <button onclick="toggleModal('jargonModal')" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-100 font-semibold py-2.5 rounded-xl text-xs transition-all active:scale-95">
+        Gets ko na!
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State Persistence
+    let transactions = JSON.parse(localStorage.getItem('pocket_ledger_data')) || [];
+
+    // DOM Elements
+    const form = document.getElementById('transForm');
+    const descInput = document.getElementById('desc');
+    const amountInput = document.getElementById('amount');
+    const typeInput = document.getElementById('type');
+    const transList = document.getElementById('transList');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackText = document.getElementById('feedbackText');
+
+    // Utility: Toggle Modal
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    // Accounting Calculator & Engine
+    function updateDashboard() {
+      let assets = 0;
+      let liabilities = 0;
+      let equity = 0;
+
+      transactions.forEach(t => {
+        const val = parseFloat(t.amount);
+        if (t.type === 'allowance' || t.type === 'savings') {
+          assets += val;
+          equity += val;
+        } else if (t.type === 'expense') {
+          assets -= val;
+          equity -= val;
+        } else if (t.type === 'debt') {
+          assets += val;
+          liabilities += val;
+        }
+      });
+
+      document.getElementById('assetsVal').textContent = `₱${assets.toFixed(2)}`;
+      document.getElementById('liabVal').textContent = `₱${liabilities.toFixed(2)}`;
+      document.getElementById('equityVal').textContent = `₱${equity.toFixed(2)}`;
+      document.getElementById('eqDisplay').textContent = `₱${assets.toFixed(2)} = ₱${liabilities.toFixed(2)} + ₱${equity.toFixed(2)}`;
+
+      localStorage.setItem('pocket_ledger_data', JSON.stringify(transactions));
+      renderList();
+      checkBadges();
+      drawChart(assets, liabilities, equity);
+    }
+
+    // Render Recent Transaction Items
+    function renderList() {
+      transList.innerHTML = '';
+      if (transactions.length === 0) {
+        transList.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 border border-dashed border-slate-800 rounded-xl">Wala pang transactions. Mag-add ka sa itaas!</p>`;
+        return;
+      }
+
+      transactions.slice().reverse().forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'bg-slate-800/90 p-3.5 rounded-xl border border-slate-700/70 flex justify-between items-center text-xs shadow-sm hover:border-slate-600 transition-all';
+        
+        let color = 'text-emerald-400';
+        let prefix = '+';
+        if (t.type === 'expense') { color = 'text-rose-400'; prefix = '-'; }
+        if (t.type === 'debt') { color = 'text-amber-400'; prefix = '+'; }
+
+        item.innerHTML = `
+          <div class="space-y-0.5 max-w-[65%]">
+            <p class="font-bold text-slate-200 truncate">${escapeHtml(t.desc)}</p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[9px] text-slate-400 capitalize bg-slate-900/60 px-2 py-0.5 rounded-md border border-slate-800">${t.type}</span>
+              <span class="text-[9px] text-slate-500">${t.date}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold font-mono text-xs sm:text-sm ${color}">${prefix}₱${parseFloat(t.amount).toFixed(2)}</span>
+            <button onclick="deleteEntry(${t.id})" class="text-slate-500 hover:text-rose-400 p-1 font-bold text-sm transition-colors" title="Delete">✕</button>
+          </div>
+        `;
+        transList.appendChild(item);
+      });
+    }
+
+    // Delete Single Entry
+    function deleteEntry(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      updateDashboard();
+    }
+
+    // Clear All Records
+    function clearData() {
+      if (confirm("Sigurado ka bang gusto mong burahin ang lahat ng transaction records?")) {
+        transactions = [];
+        feedbackBox.classList.add('hidden');
+        updateDashboard();
+      }
+    }
+
+    // Smart Feedback System
+    function giveFeedback(type, amount, desc) {
+      feedbackBox.classList.remove('hidden');
+      const amtFormatted = `₱${parseFloat(amount).toFixed(2)}`;
+      
+      if (type === 'expense') {
+        feedbackText.innerHTML = `Ang paggastos ng <b>${amtFormatted}</b> para sa "<b>${escapeHtml(desc)}</b>" ay isang <span class="text-rose-400 font-bold">EXPENSE</span> — bumaba ang iyong Cash (Asset) at bumaba din ang iyong Net Worth (Equity)!`;
+      } else if (type === 'allowance') {
+        feedbackText.innerHTML = `Naisama ang <b>${amtFormatted}</b> bilang <span class="text-emerald-400 font-bold">ALLOWANCE</span> — pumasok ito bilang Asset at nagpataas din sa iyong Equity!`;
+      } else if (type === 'savings') {
+        feedbackText.innerHTML = `Magaling! Ang pagtatabi ng <b>${amtFormatted}</b> ay nagpapatibay sa iyong <span class="text-sky-400 font-bold">SAVINGS TREND</span> at nagpapataas ng iyong Net Worth!`;
+      } else if (type === 'debt') {
+        feedbackText.innerHTML = `Ang inutang na <b>${amtFormatted}</b> ay nagdagdag ng Cash (Asset) mo pero tumaas din ang iyong <span class="text-amber-400 font-bold">LIABILITY</span>. Balanced pa rin!`;
+      }
+    }
+
+    // Gamification Badges Logic
+    function checkBadges() {
+      const badges = [
+        { name: "First Entry", desc: "1 Entry", unlocked: transactions.length >= 1, icon: "🌱" },
+        { name: "Consistent", desc: "5 Entries", unlocked: transactions.length >= 5, icon: "🔥" },
+        { name: "Accountant", desc: "10 Entries", unlocked: transactions.length >= 10, icon: "📊" }
+      ];
+
+      const container = document.getElementById('badgeContainer');
+      container.innerHTML = '';
+      let unlockedCount = 0;
+
+      badges.forEach(b => {
+        if (b.unlocked) unlockedCount++;
+        const badgeEl = document.createElement('div');
+        badgeEl.className = `p-2 rounded-xl text-center border text-xs transition-all ${
+          b.unlocked ? 'bg-slate-900 border-emerald-500/40 text-slate-200' : 'bg-slate-900/30 border-slate-800 text-slate-600 opacity-50'
+        }`;
+        badgeEl.innerHTML = `
+          <div class="text-base mb-0.5">${b.icon}</div>
+          <div class="font-bold text-[10px] leading-none">${b.name}</div>
+        `;
+        container.appendChild(badgeEl);
+      });
+
+      document.getElementById('badgeCount').textContent = `${unlockedCount} / ${badges.length} Unlocked`;
+    }
+
+    // Canvas Chart Renderer
+    function drawChart(assets, liab, equity) {
+      const canvas = document.getElementById('financialChart');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const maxVal = Math.max(assets, liab, equity, 100);
+      const items = [
+        { label: 'Assets', val: Math.max(assets, 0), color: '#10b981' },
+        { label: 'Liabilities', val: Math.max(liab, 0), color: '#f43f5e' },
+        { label: 'Equity', val: Math.max(equity, 0), color: '#38bdf8' }
+      ];
+
+      items.forEach((item, index) => {
+        const x = 35 + index * 80;
+        const barHeight = (item.val / maxVal) * 75;
+        const y = 100 - barHeight;
+
+        ctx.fillStyle = item.color;
+        ctx.beginPath();
+        ctx.roundRect(x, y, 40, barHeight, [4, 4, 0, 0]);
+        ctx.fill();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.label, x + 20, 118);
+      });
+    }
+
+    // Export Data CSV Engine (For Action Research Data Gathering)
+    function exportToCSV() {
+      if (transactions.length === 0) {
+        alert("Walang transaction records na pwedeng i-export, pare!");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,ID,Description,Amount,Type,Date\n";
+      transactions.forEach(t => {
+        csvContent += `${t.id},"${t.desc.replace(/"/g, '""')}",${t.amount},${t.type},${t.date}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `PocketLedger_Data_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Sanitize Inputs
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    // Form Event Handler
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const desc = descInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const type = typeInput.value;
+      const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+      transactions.push({ id: Date.now(), desc, amount, type, date });
+      updateDashboard();
+      giveFeedback(type, amount, desc);
+
+      descInput.value = '';
+      amountInput.value = '';
+    });
+
+    // Run Dashboard Init
+    updateDashboard();
+  </script>
+</body>
+</html>
